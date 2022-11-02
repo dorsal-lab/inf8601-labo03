@@ -40,40 +40,14 @@ add_custom_target(format
 )
 
 add_custom_target(remise
-    COMMAND zip --must-match -r ${CMAKE_CURRENT_BINARY_DIR}/remise.zip
-                images/earth-small.png
-                images/earth-medium.png
-                images/earth-large.png
-                images/earth-xlarge.png
-                include/*.h
-                scripts/*.sh
-                source/*.c
-                tests/*
-                CMakeLists.txt
-                README.pdf
-                .clang-format
-                .gitignore
+    COMMAND tar -zcvf remise.tar.gz source/heatsim-mpi.c
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 )
-add_dependencies(remise heatsim)
 
-add_custom_target(handout
-    COMMAND asciidoctor-pdf README.asc
-    COMMAND zip --must-match -r ${CMAKE_CURRENT_BINARY_DIR}/handout.zip
-                images/earth-small.png
-                images/earth-medium.png
-                images/earth-large.png
-                images/earth-xlarge.png
-                include/*.h
-                scripts/*.sh
-                source/*.c
-                tests/*
-                CMakeLists.txt
-                README.pdf
-                .clang-format
-                .gitignore
+add_custom_target(check
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/run-check ${CMAKE_CURRENT_BINARY_DIR}/heatsim
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 )
-add_dependencies(handout heatsim)
 
-add_subdirectory(tests)
+install(TARGETS heatsim)
+
