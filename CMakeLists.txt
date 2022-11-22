@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16.0)
-project(tp3 LANGUAGES C)
+project(tp3 LANGUAGES C CXX)
 
 set(CMAKE_C_FLAGS "${CMAKE_CFLAGS} -std=c99 -Wall")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CFLAGS_RELEASE} -O2 -g")
@@ -49,5 +49,42 @@ add_custom_target(check
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 )
 
-install(TARGETS heatsim)
+# ----- Source checker ----- #
 
+if(DEFINED CLANG_INCLUDE_DIR)
+
+add_executable(source-checker
+    source/matcher/main.cpp
+    source/matcher/file_search.cpp
+)
+
+target_link_libraries(source-checker
+    clangTooling
+    clangFrontend
+    clangSerialization
+    clangDriver
+    clangRewriteFrontend
+    clangRewrite
+    clangParse
+    clangSema
+    clangAnalysis
+    clangAST
+    clangASTMatchers
+    clangEdit
+    clangLex
+    clangBasic
+    LLVMSupport
+    LLVMFrontendOpenMP
+)
+
+add_custom_target(check-source
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/source-checker
+    -d ${CMAKE_CURRENT_SOURCE_DIR}
+    -v ${VARIANT}
+)
+
+add_dependencies(check-source source-checker)
+
+endif()
+
+install(TARGETS heatsim)
