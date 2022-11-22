@@ -84,6 +84,7 @@ add_custom_target(check-source
 )
 
 add_dependencies(check-source source-checker)
+add_dependencies(check check-source)
 
 endif()
 
